@@ -38,26 +38,15 @@ public class FileController {
 
     @PostMapping("/Hostel/uploadFile")
     public ImageResponse uploadFile(@RequestParam("file") MultipartFile file, @RequestParam("hostelId") long hostelId) {
-        String fileName = fileStorageService.storeFile(file);
-        System.out.println(fileName);
+    	String fileName = fileStorageService.storeFile(file);
         String imgUrl = ServletUriComponentsBuilder.fromCurrentContextPath()
         		.path("api")
                 .path("/downloadFile/")
                 .path(fileName)
                 .toUriString();
-       
         return imageService.addImage(imgUrl, fileName, hostelId);
     }
     
-//    @PostMapping("/Account/uploadFile")
-//    public Account uploadFileAccount(@RequestParam("file") MultipartFile file, @RequestParam("username") String username) {
-//        String fileName = fileStorageService.storeFile(file);
-//        String imgUrl = ServletUriComponentsBuilder.fromCurrentContextPath()
-//                .path("/downloadFile/")
-//                .path(fileName)
-//                .toUriString();
-//        return accountService.addAvatar(username, imgUrl);
-//    }
 
     @PostMapping("/Hostel/uploadMultipleFiles")
     public List<ImageResponse> uploadMultipleFiles(@RequestParam("files") MultipartFile[] files, @RequestParam("hostelId") long hostelId) {

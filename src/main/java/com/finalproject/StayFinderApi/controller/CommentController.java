@@ -41,8 +41,9 @@ public class CommentController {
 	@PostMapping
 	public CommentResponse addComment(@RequestParam(required = true) long postId,@RequestParam(required = true) String username,@RequestParam(required = true) String content, @RequestParam(name = "file", required = false) MultipartFile file ){
 		  if(file != null) {
-		    	String fileName = fileStorageService.storeFile(file);
+				String fileName = fileStorageService.storeFile(file);
 		        String imgUrl = ServletUriComponentsBuilder.fromCurrentContextPath()
+		        		.path("api")
 		                .path("/downloadFile/")
 		                .path(fileName)
 		                .toUriString();

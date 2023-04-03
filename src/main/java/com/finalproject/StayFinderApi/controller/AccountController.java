@@ -20,6 +20,7 @@ import com.finalproject.StayFinderApi.dto.AccountProfile;
 import com.finalproject.StayFinderApi.dto.AccountReq;
 import com.finalproject.StayFinderApi.entity.Account;
 import com.finalproject.StayFinderApi.service.IAccountService;
+import com.finalproject.StayFinderApi.service.IImageService;
 import com.finalproject.StayFinderApi.service.impl.FileStorageService;
 
 @RestController
@@ -31,6 +32,9 @@ public class AccountController {
 	
     @Autowired
     private FileStorageService fileStorageService;
+    
+    @Autowired
+    private IImageService imageService;
 	
 	@GetMapping
 	public List<Account> getAll(){
@@ -55,8 +59,9 @@ public class AccountController {
 	@PostMapping
 	public Account addAccount(@RequestParam(required = true) String username, @RequestParam(required = false) String password,@RequestParam(required = false) String name, @RequestParam(name = "file", required = false) MultipartFile file) {
 		  if(file != null) {
-		    	String fileName = fileStorageService.storeFile(file);
+				String fileName = fileStorageService.storeFile(file);
 		        String imgUrl = ServletUriComponentsBuilder.fromCurrentContextPath()
+		        		.path("api")
 		                .path("/downloadFile/")
 		                .path(fileName)
 		                .toUriString();
@@ -68,11 +73,7 @@ public class AccountController {
 	@PutMapping
 	public Account updateAccountProfile(@RequestParam(required = true) String username,@RequestParam(required = false) String name,@RequestParam(required = false) boolean gender,@RequestParam(required = false) String phonenumber, @RequestParam(name = "file", required = false) MultipartFile file) {
 	    if(file != null) {
-	    	String fileName = fileStorageService.storeFile(file);
-	        String imgUrl = ServletUriComponentsBuilder.fromCurrentContextPath()
-	                .path("/downloadFile/")
-	                .path(fileName)
-	                .toUriString();
+	    	String imgUrl = imageService.createImgUrl(file);
 	        return accountService.updateAccountProfile(new AccountProfile(name, username, gender, phonenumber, imgUrl));
 	    }
 	    return accountService.updateAccountProfile(new AccountProfile(name, username, gender, phonenumber, null));
