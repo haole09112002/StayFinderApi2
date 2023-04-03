@@ -41,6 +41,7 @@ public class FileController {
         String fileName = fileStorageService.storeFile(file);
         System.out.println(fileName);
         String imgUrl = ServletUriComponentsBuilder.fromCurrentContextPath()
+        		.path("api")
                 .path("/downloadFile/")
                 .path(fileName)
                 .toUriString();
