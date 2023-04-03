@@ -10,14 +10,12 @@ import org.springframework.stereotype.Service;
 import com.finalproject.StayFinderApi.dto.AccountRespone;
 import com.finalproject.StayFinderApi.dto.HostelResp;
 import com.finalproject.StayFinderApi.dto.PagedResponse;
-import com.finalproject.StayFinderApi.dto.PostResp;
 import com.finalproject.StayFinderApi.entity.Account;
 import com.finalproject.StayFinderApi.entity.Post;
 import com.finalproject.StayFinderApi.exception.AppException;
 import com.finalproject.StayFinderApi.exception.BadRequestException;
 import com.finalproject.StayFinderApi.exception.NotFoundException;
 import com.finalproject.StayFinderApi.repository.AccountRepository;
-import com.finalproject.StayFinderApi.repository.HostelRepository;
 import com.finalproject.StayFinderApi.repository.PostRepository;
 import com.finalproject.StayFinderApi.service.IFavouritesAccountPostService;
 

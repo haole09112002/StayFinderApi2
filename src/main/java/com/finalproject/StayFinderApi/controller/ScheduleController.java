@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.finalproject.StayFinderApi.dto.ScheduleRequest;
 import com.finalproject.StayFinderApi.dto.ScheduleResponse;
-import com.finalproject.StayFinderApi.entity.Schedule;
 import com.finalproject.StayFinderApi.service.IScheduleService;
 
 @RestController

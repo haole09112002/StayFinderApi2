@@ -14,13 +14,8 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.finalproject.StayFinderApi.dto.ImageResponse;
-import com.finalproject.StayFinderApi.entity.Account;
-import com.finalproject.StayFinderApi.service.IAccountService;
-import com.finalproject.StayFinderApi.service.ICommentService;
-import com.finalproject.StayFinderApi.service.IHostelService;
 import com.finalproject.StayFinderApi.service.IImageService;
 import com.finalproject.StayFinderApi.service.impl.FileStorageService;
-import com.finalproject.StayFinderApi.service.impl.HostelServiceImpl;
 
 import jakarta.servlet.http.HttpServletRequest;
 import java.io.IOException;
@@ -40,11 +35,6 @@ public class FileController {
     @Autowired
     private IImageService imageService;
     
-    @Autowired
-    private IAccountService accountService;
-    
-    @Autowired
-    private ICommentService commentService;
 
     @PostMapping("/Hostel/uploadFile")
     public ImageResponse uploadFile(@RequestParam("file") MultipartFile file, @RequestParam("hostelId") long hostelId) {

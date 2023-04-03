@@ -1,6 +1,5 @@
 package com.finalproject.StayFinderApi.service.impl;
 
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 

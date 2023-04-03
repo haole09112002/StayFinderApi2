@@ -3,7 +3,6 @@ package com.finalproject.StayFinderApi.dto;
 import java.io.Serializable;
 import java.util.Date;
 
-import com.finalproject.StayFinderApi.entity.Post;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

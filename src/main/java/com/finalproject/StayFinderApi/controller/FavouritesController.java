@@ -1,9 +1,6 @@
 package com.finalproject.StayFinderApi.controller;
 
 import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,9 +13,6 @@ import com.finalproject.StayFinderApi.dto.AccountRespone;
 import com.finalproject.StayFinderApi.dto.FavouritesRequest;
 import com.finalproject.StayFinderApi.dto.HostelResp;
 import com.finalproject.StayFinderApi.dto.PagedResponse;
-import com.finalproject.StayFinderApi.entity.Account;
-import com.finalproject.StayFinderApi.entity.Hostel;
-import com.finalproject.StayFinderApi.entity.Post;
 import com.finalproject.StayFinderApi.service.IFavouritesAccountPostService;
 import com.finalproject.StayFinderApi.service.IHostelService;
 import com.finalproject.StayFinderApi.utils.AppConstants;

@@ -1,7 +1,6 @@
 package com.finalproject.StayFinderApi.repository;
 
 
-import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.domain.Page;

@@ -4,10 +4,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.finalproject.StayFinderApi.entity.Image;
-import com.finalproject.StayFinderApi.entity.Post;
-import com.finalproject.StayFinderApi.entity.RoomType;
+
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

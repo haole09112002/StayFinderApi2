@@ -2,9 +2,6 @@ package com.finalproject.StayFinderApi.dto;
 
 import java.io.Serializable;
 import java.util.Date;
-import java.util.List;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 
 import lombok.AllArgsConstructor;
