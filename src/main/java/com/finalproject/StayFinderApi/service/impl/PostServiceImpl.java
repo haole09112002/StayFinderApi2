@@ -8,7 +8,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.finalproject.StayFinderApi.dto.AccountRespone;
-import com.finalproject.StayFinderApi.dto.PostResp;
+import com.finalproject.StayFinderApi.dto.HostelResponse;
+import com.finalproject.StayFinderApi.dto.PostResponse;
+import com.finalproject.StayFinderApi.dto.RoomtypeResponse;
+import com.finalproject.StayFinderApi.entity.Hostel;
 import com.finalproject.StayFinderApi.entity.Post;
 import com.finalproject.StayFinderApi.entity.PostStatusEnum;
 import com.finalproject.StayFinderApi.exception.AppException;
@@ -24,19 +27,17 @@ public class PostServiceImpl implements IPostService {
 	private PostRepository postRepo;
 
 	@Override
-	public List<PostResp> getAll() {
+	public List<PostResponse> getAll() {
 		return postRepo.findAll().stream().map(p -> {
-			PostResp postResp = new PostResp(p.getId(), new AccountRespone(p.getAccount().getUsername(), p.getAccount().getName(), p.getAccount().getAvatarUrl()), p.getTitle(),
-					p.getContent(), p.getNumberOfFavourites(), p.getStatus(), p.getPostTime(), p.getHostel().getId());
-			return postResp;
+			return convertToPostResp(p);
 		}).collect(Collectors.toList());
 	}
 
 	@Override
-	public Post getById(long id) {
+	public PostResponse getById(long id) {
 		Optional<Post> optional = postRepo.findById(id);
 		if (optional.isPresent())
-			return optional.get();
+			return convertToPostResp(optional.get());
 		else {
 			throw new NotFoundException("Post id: " + id + " khong ton tai");
 		}
@@ -49,21 +50,28 @@ public class PostServiceImpl implements IPostService {
 	}
 
 	@Override
-	public Post addPost(Post post) {
+	public PostResponse addPost(Post post) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public List<Post> findByAccountUsernameAndStatus(String username, int status) {
-
-		return postRepo.findByAccountUsernameAndStatus(username, status);
+	public List<PostResponse> findByAccountUsernameAndStatus(String username, int status) {
+		List<Post> posts = postRepo.findByAccountUsernameAndStatus(username, status);
+		return posts.stream().map(p -> {
+			return convertToPostResp(p);
+		}).collect(Collectors.toList());
 	}
 
 	@Override
-	public List<Post> findByStatus(int status) {
+	public List<PostResponse> findByStatus(int status) {
 		if(status == PostStatusEnum.APPROVED.getValue() || status == PostStatusEnum.NOT_APPROVED.getValue() ||status == PostStatusEnum.NOT_YET_APPROVED.getValue())
-			return  postRepo.findByStatus(status);
+		{
+			List<Post> posts = postRepo.findByStatus(status);
+			return posts.stream().map(p -> {
+				return convertToPostResp(p);
+			}).collect(Collectors.toList());
+		}
 		throw new BadRequestException("Status id: " + status + " khong ton tai");
 	}
 
@@ -80,6 +88,14 @@ public class PostServiceImpl implements IPostService {
 			throw new BadRequestException("Status id: " + status + " khong ton tai");
 		}
 		throw new AppException("That bai, id: "+ id + " khong ton tai");
+	}
+	
+	public PostResponse convertToPostResp(Post p) {
+		Hostel h = p.getHostel();
+		HostelResponse hostelResponse = new HostelResponse(h.getId(), h.getName(), h.getCapacity(), h.getArea(), h.getAddress(), h.getRentPrice(), h.getDepositPrice(), h.getStatus(), h.getDescription(), new RoomtypeResponse(h.getRoomtype().getId(), h.getRoomtype().getRoomTypeName()), h.getElectricPrice(), h.getWaterPrice(), h.getImages());
+		PostResponse postResp = new PostResponse(p.getId(), new AccountRespone(p.getAccount().getUsername(), p.getAccount().getName(), p.getAccount().getAvatarUrl()), p.getTitle(),
+				p.getContent(), p.getNumberOfFavourites(), p.getStatus(), p.getPostTime(), hostelResponse);
+		return postResp;
 	}
 
 }

@@ -2,20 +2,20 @@ package com.finalproject.StayFinderApi.service;
 
 import java.util.List;
 
-import com.finalproject.StayFinderApi.dto.PostResp;
+import com.finalproject.StayFinderApi.dto.PostResponse;
 import com.finalproject.StayFinderApi.entity.Post;
 
 public interface IPostService {
 	
-	List<PostResp> getAll();
+	List<PostResponse> getAll();
 	
-	Post getById(long id);
+	PostResponse getById(long id);
 	
-	Post addPost(Post post);
+	PostResponse addPost(Post post);
 	
-	List<Post> findByAccountUsernameAndStatus(String username, int status);
+	List<PostResponse> findByAccountUsernameAndStatus(String username, int status);
 	
-	List<Post> findByStatus(int status);
+	List<PostResponse> findByStatus(int status);
 	
 	boolean deletePost(long id);
 	
