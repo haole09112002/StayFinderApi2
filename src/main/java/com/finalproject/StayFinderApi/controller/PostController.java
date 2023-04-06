@@ -10,9 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.finalproject.StayFinderApi.dto.PostResp;
 import com.finalproject.StayFinderApi.dto.PostResponse;
-import com.finalproject.StayFinderApi.entity.Post;
 import com.finalproject.StayFinderApi.service.IPostService;
 
 @RestController
@@ -34,6 +32,11 @@ public class PostController {
 	@GetMapping("/account/{username}")
 	public List<PostResponse> getByAccountUsernameAndStatus(@PathVariable String username, @RequestParam(defaultValue = "0", required = true) int status) {
 		return postService.findByAccountUsernameAndStatus(username, status);
+	}
+	
+	@GetMapping("/account/{username}")
+	public List<PostResponse> getByAccountUsername(@PathVariable String username) {
+		return postService.findByAccountUsername(username);
 	}
 	
 	@GetMapping("/status/{status}")

@@ -1,5 +1,7 @@
 package com.finalproject.StayFinderApi.service.impl;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -28,9 +30,15 @@ public class PostServiceImpl implements IPostService {
 
 	@Override
 	public List<PostResponse> getAll() {
-		return postRepo.findAll().stream().map(p -> {
+		List<PostResponse> postResponses = postRepo.findAll().stream().map(p -> {
 			return convertToPostResp(p);
 		}).collect(Collectors.toList());
+		Collections.sort(postResponses, new Comparator<PostResponse>() {
+			public int compare(PostResponse o1, PostResponse o2) {
+				return o2.getPostTime().compareTo(o1.getPostTime()) ;
+			}
+		});
+		return postResponses;
 	}
 
 	@Override
@@ -58,15 +66,21 @@ public class PostServiceImpl implements IPostService {
 	@Override
 	public List<PostResponse> findByAccountUsernameAndStatus(String username, int status) {
 		List<Post> posts = postRepo.findByAccountUsernameAndStatus(username, status);
-		return posts.stream().map(p -> {
+		List<PostResponse> postResponses = posts.stream().map(p -> {
 			return convertToPostResp(p);
 		}).collect(Collectors.toList());
+		Collections.sort(postResponses, new Comparator<PostResponse>() {
+			public int compare(PostResponse o1, PostResponse o2) {
+				return o2.getPostTime().compareTo(o1.getPostTime()) ;
+			}
+		});
+		return postResponses;
 	}
 
 	@Override
 	public List<PostResponse> findByStatus(int status) {
-		if(status == PostStatusEnum.APPROVED.getValue() || status == PostStatusEnum.NOT_APPROVED.getValue() ||status == PostStatusEnum.NOT_YET_APPROVED.getValue())
-		{
+		if (status == PostStatusEnum.APPROVED.getValue() || status == PostStatusEnum.NOT_APPROVED.getValue()
+				|| status == PostStatusEnum.NOT_YET_APPROVED.getValue()) {
 			List<Post> posts = postRepo.findByStatus(status);
 			return posts.stream().map(p -> {
 				return convertToPostResp(p);
@@ -80,22 +94,42 @@ public class PostServiceImpl implements IPostService {
 		Optional<Post> optional = postRepo.findById(id);
 		if (optional.isPresent()) {
 			Post p = optional.get();
-			if(status == PostStatusEnum.APPROVED.getValue() || status == PostStatusEnum.NOT_APPROVED.getValue() ||status == PostStatusEnum.NOT_YET_APPROVED.getValue())
-			{
+			if (status == PostStatusEnum.APPROVED.getValue() || status == PostStatusEnum.NOT_APPROVED.getValue()
+					|| status == PostStatusEnum.NOT_YET_APPROVED.getValue()) {
 				p.setStatus(status);
 				return true;
 			}
 			throw new BadRequestException("Status id: " + status + " khong ton tai");
 		}
-		throw new AppException("That bai, id: "+ id + " khong ton tai");
+		throw new AppException("That bai, id: " + id + " khong ton tai");
 	}
-	
+
 	public PostResponse convertToPostResp(Post p) {
 		Hostel h = p.getHostel();
-		HostelResponse hostelResponse = new HostelResponse(h.getId(), h.getName(), h.getCapacity(), h.getArea(), h.getAddress(), h.getRentPrice(), h.getDepositPrice(), h.getStatus(), h.getDescription(), new RoomtypeResponse(h.getRoomtype().getId(), h.getRoomtype().getRoomTypeName()), h.getElectricPrice(), h.getWaterPrice(), h.getImages());
-		PostResponse postResp = new PostResponse(p.getId(), new AccountRespone(p.getAccount().getUsername(), p.getAccount().getName(), p.getAccount().getAvatarUrl()), p.getTitle(),
-				p.getContent(), p.getNumberOfFavourites(), p.getStatus(), p.getPostTime(), hostelResponse);
+		HostelResponse hostelResponse = new HostelResponse(h.getId(), h.getName(), h.getCapacity(), h.getArea(),
+				h.getAddress(), h.getRentPrice(), h.getDepositPrice(), h.getStatus(), h.getDescription(),
+				new RoomtypeResponse(h.getRoomtype().getId(), h.getRoomtype().getRoomTypeName()), h.getElectricPrice(),
+				h.getWaterPrice(), h.getImages());
+		PostResponse postResp = new PostResponse(p.getId(),
+				new AccountRespone(p.getAccount().getUsername(), p.getAccount().getName(),
+						p.getAccount().getAvatarUrl()),
+				p.getTitle(), p.getContent(), p.getNumberOfFavourites(), p.getStatus(), p.getPostTime(),
+				hostelResponse);
 		return postResp;
+	}
+
+	@Override
+	public List<PostResponse> findByAccountUsername(String username) {
+		List<Post> posts = postRepo.findByAccountUsername(username);
+		List<PostResponse> postResponses = posts.stream().map(p -> {
+			return convertToPostResp(p);
+		}).collect(Collectors.toList());
+		Collections.sort(postResponses, new Comparator<PostResponse>() {
+			public int compare(PostResponse o1, PostResponse o2) {
+				return o2.getPostTime().compareTo(o1.getPostTime()) ;
+			}
+		});
+		return postResponses;
 	}
 
 }

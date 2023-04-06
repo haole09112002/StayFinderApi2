@@ -21,4 +21,7 @@ public interface IPostService {
 	
 	boolean changeStatus(long id, int status);
 	
+	List<PostResponse> findByAccountUsername(String username);
+	
+	
 }
