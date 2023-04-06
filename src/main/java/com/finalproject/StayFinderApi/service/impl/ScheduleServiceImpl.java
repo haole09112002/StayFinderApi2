@@ -78,7 +78,7 @@ public class ScheduleServiceImpl implements IScheduleService {
 	@Override
 	public List<ScheduleResponse> getByPostAccountUsername(String username){
 		if (username != null) {
-			List<Schedule> schedules = scheduleRepo.findByRenterUsername(username);
+			List<Schedule> schedules = scheduleRepo.findByPostAccountUsername(username);
 			Collections.sort(schedules, new Comparator<Schedule>() {
 				@Override
 				public int compare(Schedule o1, Schedule o2) {
