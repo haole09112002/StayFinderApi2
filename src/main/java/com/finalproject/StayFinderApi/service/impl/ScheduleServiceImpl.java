@@ -75,5 +75,23 @@ public class ScheduleServiceImpl implements IScheduleService {
 		}
 		throw new AppException("Can't add Schedule, can't find Post by post id: " + scheduleRequest.getPostId());
 	}
+	@Override
+	public List<ScheduleResponse> getByPostAccountUsername(String username){
+		if (username != null) {
+			List<Schedule> schedules = scheduleRepo.findByRenterUsername(username);
+			Collections.sort(schedules, new Comparator<Schedule>() {
+				@Override
+				public int compare(Schedule o1, Schedule o2) {
+					return o2.getMeetingTime().compareTo(o1.getMeetingTime());
+				}
+			});
+			return schedules.stream().map(s -> {
+				return new ScheduleResponse(s.getId(), s.getRenterUsername(), s.getRenterName(),
+						s.getRenterPhoneNumber(), s.getContent(), s.getMeetingTime(), s.getPost().getId());
+			}).collect(Collectors.toList());
+		}
+		throw new NotFoundException("username: " + username + " khong ton tai");
+	}
+
 
 }

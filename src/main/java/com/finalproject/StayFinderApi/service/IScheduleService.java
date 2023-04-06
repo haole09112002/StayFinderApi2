@@ -13,4 +13,6 @@ public interface IScheduleService {
 	List<ScheduleResponse> getSchedulesByRenterUsername(String username);
 	
 	ScheduleResponse addSchedule(ScheduleRequest scheduleRequest);
+	
+	List<ScheduleResponse> getByPostAccountUsername(String username);
 }

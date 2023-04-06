@@ -26,9 +26,14 @@ public class ScheduleController {
 		return scheduleService.getSchedulesByPostId(postId);
 	}
 
-	@GetMapping("/account/{username}")
-	public List<ScheduleResponse> getSchedulesByRenterId(@PathVariable String username) {
+	@GetMapping("/account-renter/{username}")
+	public List<ScheduleResponse> getSchedulesByRenterUsername(@PathVariable String username) {
 		return scheduleService.getSchedulesByRenterUsername(username);
+	}
+	
+	@GetMapping("/account/{username}")
+	public List<ScheduleResponse> getSchedulesByPostAccountUsername(@PathVariable String username) {
+		return scheduleService.getByPostAccountUsername(username);
 	}
 
 	@PostMapping
