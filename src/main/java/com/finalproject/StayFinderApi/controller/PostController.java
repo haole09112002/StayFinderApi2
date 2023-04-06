@@ -30,11 +30,11 @@ public class PostController {
 		return postService.getById(id);
 	}
 	@GetMapping("/account/{username}")
-	public List<PostResponse> getByAccountUsernameAndStatus(@PathVariable String username, @RequestParam(defaultValue = "0", required = true) int status) {
+	public List<PostResponse> getByAccountUsernameAndStatus(@PathVariable String username, @RequestParam( required = true) int status) {
 		return postService.findByAccountUsernameAndStatus(username, status);
 	}
 	
-	@GetMapping("/{username}")
+	@GetMapping("/account/{username}")
 	public List<PostResponse> getByAccountUsername(@PathVariable String username) {
 		return postService.findByAccountUsername(username);
 	}
