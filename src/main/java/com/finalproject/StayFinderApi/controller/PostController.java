@@ -34,7 +34,7 @@ public class PostController {
 		return postService.findByAccountUsernameAndStatus(username, status);
 	}
 	
-	@GetMapping("/account/{username}")
+	@GetMapping("/{username}")
 	public List<PostResponse> getByAccountUsername(@PathVariable String username) {
 		return postService.findByAccountUsername(username);
 	}
