@@ -97,6 +97,7 @@ public class PostServiceImpl implements IPostService {
 			if (status == PostStatusEnum.APPROVED.getValue() || status == PostStatusEnum.NOT_APPROVED.getValue()
 					|| status == PostStatusEnum.NOT_YET_APPROVED.getValue()) {
 				p.setStatus(status);
+				postRepo.save(p);
 				return true;
 			}
 			throw new BadRequestException("Status id: " + status + " khong ton tai");
