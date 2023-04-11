@@ -1,5 +1,6 @@
 package com.finalproject.StayFinderApi.service;
 
+
 import com.finalproject.StayFinderApi.dto.HostelRequest;
 import com.finalproject.StayFinderApi.dto.HostelResp;
 import com.finalproject.StayFinderApi.dto.PagedResponse;
@@ -26,9 +27,7 @@ public interface IHostelService {
 	PagedResponse<HostelResp> getHostelByStatus(int page, int size, int status);
 	
 	PagedResponse<HostelResp> getHostelByHostelStatusAndPostStatus(int page, int size, int status, int postStatus);
-	
-	PagedResponse<HostelResp> getListHostelFavouriteByUsername(int page, int size, String username);
-	
+		
 	
 	
 }

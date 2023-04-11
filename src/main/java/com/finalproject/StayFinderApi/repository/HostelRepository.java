@@ -36,6 +36,6 @@ public interface HostelRepository extends JpaRepository<Hostel, Long> {
 			+ "	 ORDER BY p.postTime DESC")
 	Page<Hostel> findByManyOption2(String address, double minArea, double maxArea, double minRent, double maxRent, int capacity, Pageable pageable);
 	
-	@Query("select h from Hostel h inner join  Post p ON h.id = p.id where p.status = 1 and h.status = 1 and p.account.username = ?1 ORDER BY p.postTime DESC")
-	Page<Hostel> findHostelFavouriteByUseName(String username, Pageable pageable);
+//	@Query("select h from Hostel h inner join  Post p ON h.id = p.id where p.status = 1 and h.status = 1 and p.listAccountLiked.username = ?1 ORDER BY p.postTime DESC")
+//	List<Hostel> findHostelFavouriteByUseName(String username);
 }

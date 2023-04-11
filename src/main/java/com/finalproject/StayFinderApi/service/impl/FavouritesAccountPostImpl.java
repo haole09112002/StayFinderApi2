@@ -1,5 +1,8 @@
 package com.finalproject.StayFinderApi.service.impl;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -9,13 +12,18 @@ import org.springframework.stereotype.Service;
 
 import com.finalproject.StayFinderApi.dto.AccountRespone;
 import com.finalproject.StayFinderApi.dto.HostelResp;
-import com.finalproject.StayFinderApi.dto.PagedResponse;
+import com.finalproject.StayFinderApi.dto.PostResp;
+import com.finalproject.StayFinderApi.dto.RoomtypeResponse;
 import com.finalproject.StayFinderApi.entity.Account;
+import com.finalproject.StayFinderApi.entity.Hostel;
 import com.finalproject.StayFinderApi.entity.Post;
+import com.finalproject.StayFinderApi.entity.Schedule;
 import com.finalproject.StayFinderApi.exception.AppException;
 import com.finalproject.StayFinderApi.exception.BadRequestException;
 import com.finalproject.StayFinderApi.exception.NotFoundException;
 import com.finalproject.StayFinderApi.repository.AccountRepository;
+import com.finalproject.StayFinderApi.repository.HostelRepository;
+import com.finalproject.StayFinderApi.repository.ImageRepository;
 import com.finalproject.StayFinderApi.repository.PostRepository;
 import com.finalproject.StayFinderApi.service.IFavouritesAccountPostService;
 
@@ -28,6 +36,11 @@ public class FavouritesAccountPostImpl implements IFavouritesAccountPostService{
 	@Autowired
 	private PostRepository postRepo;
 	
+	@Autowired
+	private HostelRepository hostelRepo;
+	
+	@Autowired
+	private ImageRepository imageRepo;
 	
 	@Override
 	public boolean addFavourites(String username, long postId) {
@@ -126,8 +139,37 @@ public class FavouritesAccountPostImpl implements IFavouritesAccountPostService{
 	}
 
 	@Override
-	public PagedResponse<HostelResp> getListHostelFavoritesByUsername(String username) {
-		// TODO Auto-generated method stub
-		return null;
+	public List<HostelResp> getListHostelFavoritesByUsername(String username) {
+//		
+		List<HostelResp> hostelResps = new ArrayList<HostelResp>();
+		if (!accountRepo.existsByUsername(username))
+			new NotFoundException("Username: " + username + " khong ton tai");
+		List<Hostel> hostels = hostelRepo.findAll();
+		for(Hostel h : hostels) {
+			for(Account acc : h.getPost().getListAccountLiked()) {
+				if (acc.getUsername().equals(username)) {
+					Post post = h.getPost();
+					PostResp postResp = new PostResp(post.getId(),
+							new AccountRespone(post.getAccount().getUsername(), post.getAccount().getName(),
+									post.getAccount().getAvatarUrl()),
+							post.getTitle(), post.getContent(), post.getNumberOfFavourites(), post.getStatus(),
+							post.getPostTime(), post.getHostel().getId());
+					hostelResps.add(new HostelResp(h.getId(), h.getName(), h.getCapacity(), h.getArea(), h.getAddress(),
+							h.getRentPrice(), h.getDepositPrice(), h.getStatus(), h.getDescription(),
+							new RoomtypeResponse(h.getRoomtype().getId(), h.getRoomtype().getRoomTypeName()),
+							h.getElectricPrice(), h.getWaterPrice(), postResp, imageRepo.findByHostelId(h.getId())));
+				}
+					
+			}
+		}
+		Collections.sort(hostelResps, new Comparator<HostelResp>() {
+			@Override
+			public int compare(HostelResp o1, HostelResp o2) {
+				return o2.getPost().getPostTime().compareTo(o1.getPost().getPostTime());
+			}
+		});
+		
+		return hostelResps;
+		
 	}
 }

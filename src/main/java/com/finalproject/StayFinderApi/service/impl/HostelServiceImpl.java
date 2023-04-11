@@ -299,23 +299,22 @@ public class HostelServiceImpl implements IHostelService {
 				hostelPage.getTotalElements(), hostelPage.getTotalPages(), hostelPage.isLast());
 	}
 
-	@Override
-	public PagedResponse<HostelResp> getListHostelFavouriteByUsername(int page, int size, String username) {
-		PageRequest pageable = PageRequest.of(page, size);
-		Page<Hostel> hostelPage = hostelRepo.findHostelFavouriteByUseName(username ,pageable);
-		List<HostelResp> hostelResponse = new ArrayList<HostelResp>(hostelPage.getContent().size());
-		hostelResponse = hostelPage.getContent().stream().map(h -> {
-			PostResp postResp = new PostResp(h.getPost().getId(),
-					new AccountRespone(h.getPost().getAccount().getUsername(), h.getPost().getAccount().getName(),
-							h.getPost().getAccount().getAvatarUrl()),
-					h.getPost().getTitle(), h.getPost().getContent(), h.getPost().getNumberOfFavourites(),
-					h.getPost().getStatus(), h.getPost().getPostTime(), h.getPost().getHostel().getId());
-			return new HostelResp(h.getId(), h.getName(), h.getCapacity(), h.getArea(), h.getAddress(),
-					h.getRentPrice(), h.getDepositPrice(), h.getStatus(), h.getDescription(),
-					new RoomtypeResponse(h.getRoomtype().getId(), h.getRoomtype().getRoomTypeName()),
-					h.getElectricPrice(), h.getWaterPrice(), postResp, imageRepo.findByHostelId(h.getId()));
-		}).collect(Collectors.toList());
-		return new PagedResponse<HostelResp>(hostelResponse, hostelPage.getNumber(), hostelPage.getSize(),
-				hostelPage.getTotalElements(), hostelPage.getTotalPages(), hostelPage.isLast());
-	}
+//	@Override
+//	public List<HostelResp> getListHostelFavouriteByUsername(String username) {
+//	
+//		List<Hostel> hostels = hostelRepo.findHostelFavouriteByUseName(username);
+//		List<HostelResp> hostelResponse = new ArrayList<HostelResp>(hostels.size());
+//		hostelResponse = hostels.stream().map(h -> {
+//			PostResp postResp = new PostResp(h.getPost().getId(),
+//					new AccountRespone(h.getPost().getAccount().getUsername(), h.getPost().getAccount().getName(),
+//							h.getPost().getAccount().getAvatarUrl()),
+//					h.getPost().getTitle(), h.getPost().getContent(), h.getPost().getNumberOfFavourites(),
+//					h.getPost().getStatus(), h.getPost().getPostTime(), h.getPost().getHostel().getId());
+//			return new HostelResp(h.getId(), h.getName(), h.getCapacity(), h.getArea(), h.getAddress(),
+//					h.getRentPrice(), h.getDepositPrice(), h.getStatus(), h.getDescription(),
+//					new RoomtypeResponse(h.getRoomtype().getId(), h.getRoomtype().getRoomTypeName()),
+//					h.getElectricPrice(), h.getWaterPrice(), postResp, imageRepo.findByHostelId(h.getId()));
+//		}).collect(Collectors.toList());
+//		return hostelResponse;
+//	}
 }
