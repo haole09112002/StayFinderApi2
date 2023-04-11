@@ -19,7 +19,7 @@ public class ScheduleResponse implements Serializable {
 	
 	private long id;
 	
-	private String username;
+	private String renteUsername;
 
 	private String renterName;
 
@@ -29,6 +29,7 @@ public class ScheduleResponse implements Serializable {
 	
 	private Date meetingTime;
 	
-	private long postId;
+	private PostResponse post;
+	
 		
 }
