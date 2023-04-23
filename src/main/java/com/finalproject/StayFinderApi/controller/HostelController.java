@@ -67,6 +67,19 @@ public class HostelController {
 		return hostelService.findByManyOption(page, size,address, areaMin, areaMax, minRent, maxRent, capacity, idRoomType);
 	}
 	
+	@GetMapping("/search-admin")
+	public PagedResponse<HostelResp> findByManyOptionAdmin(@RequestParam(name = "page", required = false, defaultValue = AppConstants.DEFAULT_PAGE_NUMBER) Integer page,
+			@RequestParam(name = "size", required = false, defaultValue = AppConstants.DEFAULT_PAGE_SIZE) Integer size,@RequestParam(required = false, defaultValue = "") String address,
+			@RequestParam(required = false, defaultValue = "0.0") double areaMin,
+			@RequestParam(required = false, defaultValue = "100.0") double areaMax,
+			@RequestParam(required = false, defaultValue = "0.0") double minRent,
+			@RequestParam(required = false, defaultValue = "10000000") double maxRent,
+			@RequestParam(required = false, defaultValue = "10") int capacity,
+			@RequestParam(required = false, defaultValue = "0") long idRoomType) {
+
+		return hostelService.findByManyOptionAdmin(page, size,address, areaMin, areaMax, minRent, maxRent, capacity, idRoomType);
+	}
+	
 	@PutMapping("status/{id}")
 	public HostelResp updateStatusHostel(@PathVariable long id, @RequestParam(required = false, defaultValue = "0") int status) {
 		return hostelService.updateStatusHostel(id, status);

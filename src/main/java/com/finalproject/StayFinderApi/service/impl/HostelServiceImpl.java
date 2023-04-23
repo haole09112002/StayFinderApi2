@@ -299,6 +299,36 @@ public class HostelServiceImpl implements IHostelService {
 				hostelPage.getTotalElements(), hostelPage.getTotalPages(), hostelPage.isLast());
 	}
 
+	@Override
+	public PagedResponse<HostelResp> findByManyOptionAdmin(int page, int size, String address, double areaMin,
+			double areMax, double minRent, double maxRent, int capacity, long idRoomType) {
+		AppUtils.validatePageNumberAndSize(page, size);
+		PageRequest pageable = PageRequest.of(page, size);
+		Page<Hostel> hostelsPage;
+		if(idRoomType == (long) 0)
+			hostelsPage = hostelRepo.findByManyOptionAdmin2(address, areaMin, areMax, minRent, maxRent, capacity, pageable);
+		
+		else {
+			hostelsPage = hostelRepo.findByManyOptionWithRoomTypeIdAdmin(address, areaMin, areMax, minRent, maxRent, capacity,
+					idRoomType, pageable);
+		}
+		List<HostelResp> hostelResponse = new ArrayList<>(hostelsPage.getContent().size());
+
+		hostelResponse = hostelsPage.getContent().stream().map(h -> {
+			PostResp postResp = new PostResp(h.getPost().getId(),
+					new AccountRespone(h.getPost().getAccount().getUsername(), h.getPost().getAccount().getName(),
+							h.getPost().getAccount().getAvatarUrl()),
+					h.getPost().getTitle(), h.getPost().getContent(), h.getPost().getNumberOfFavourites(),
+					h.getPost().getStatus(), h.getPost().getPostTime(), h.getPost().getHostel().getId());
+			return new HostelResp(h.getId(), h.getName(), h.getCapacity(), h.getArea(), h.getAddress(),
+					h.getRentPrice(), h.getDepositPrice(), h.getStatus(), h.getDescription(),
+					new RoomtypeResponse(h.getRoomtype().getId(), h.getRoomtype().getRoomTypeName()),
+					h.getElectricPrice(), h.getWaterPrice(), postResp, imageRepo.findByHostelId(h.getId()));
+		}).collect(Collectors.toList());
+		return new PagedResponse<HostelResp>(hostelResponse, hostelsPage.getNumber(), hostelsPage.getSize(),
+				hostelsPage.getTotalElements(), hostelsPage.getTotalPages(), hostelsPage.isLast());
+	}
+
 //	@Override
 //	public List<HostelResp> getListHostelFavouriteByUsername(String username) {
 //	

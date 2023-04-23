@@ -17,6 +17,7 @@ public interface IHostelService {
 	PagedResponse<HostelResp> getAllHostel(int page, int size);
 	
 	PagedResponse<HostelResp> findByManyOption(int page, int size,String address, double areaMin, double areMax, double minRent, double maxRent, int capacity, long idRoomType);
+	PagedResponse<HostelResp> findByManyOptionAdmin(int page, int size,String address, double areaMin, double areMax, double minRent, double maxRent, int capacity, long idRoomType);
 	
 	public HostelResp getHostelRespById(Long id);
 	
