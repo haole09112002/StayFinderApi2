@@ -17,7 +17,6 @@ import com.finalproject.StayFinderApi.dto.RoomtypeResponse;
 import com.finalproject.StayFinderApi.entity.Account;
 import com.finalproject.StayFinderApi.entity.Hostel;
 import com.finalproject.StayFinderApi.entity.Post;
-import com.finalproject.StayFinderApi.entity.Schedule;
 import com.finalproject.StayFinderApi.exception.AppException;
 import com.finalproject.StayFinderApi.exception.BadRequestException;
 import com.finalproject.StayFinderApi.exception.NotFoundException;

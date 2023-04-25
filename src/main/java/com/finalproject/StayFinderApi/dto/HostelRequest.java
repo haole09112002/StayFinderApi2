@@ -1,10 +1,6 @@
 package com.finalproject.StayFinderApi.dto;
 
 import java.io.Serializable;
-import java.util.List;
-
-import com.finalproject.StayFinderApi.entity.Image;
-
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -42,5 +38,4 @@ public class HostelRequest implements Serializable{
 	
 	private PostRequest post;
 
-	private List<Image> images;
 }

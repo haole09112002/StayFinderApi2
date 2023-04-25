@@ -64,12 +64,12 @@ public class HostelServiceImpl implements IHostelService {
 
 		Hostel hostel = hostelRepo.save(newHostel);
 
-		if (!hostelReq.getImages().isEmpty()) {
-			hostelReq.getImages().forEach(img -> {
-				img.setHostel(hostel);
-				imageRepo.save(img);
-			});
-		}
+//		if (!hostelReq.getImages().isEmpty()) {
+//			hostelReq.getImages().forEach(img -> {
+//				img.setHostel(hostel);
+//				imageRepo.save(img);
+//			});
+//		}
 
 		Post post = new Post();
 		Optional<Account> accountOptional = accountRepo.findById(hostelReq.getPost().getAccountId());
@@ -113,12 +113,12 @@ public class HostelServiceImpl implements IHostelService {
 			newHostel.setWaterPrice(hostel.getWaterPrice());
 			newHostel.setRoomtype(roomTypeRepo.findById(hostel.getRoomTypeId()).get());
 
-			if (!hostel.getImages().isEmpty()) {
-				hostel.getImages().forEach(img -> {
-					img.setHostel(newHostel);
-					imageRepo.save(img);
-				});
-			}
+//			if (!hostel.getImages().isEmpty()) {
+//				hostel.getImages().forEach(img -> {
+//					img.setHostel(newHostel);
+//					imageRepo.save(img);
+//				});
+//			}
 			Hostel h = hostelRepo.save(newHostel);
 
 			Post post = postRepo.findById(hostel.getId()).get();
