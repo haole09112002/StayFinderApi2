@@ -11,7 +11,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.finalproject.StayFinderApi.dto.ImageResponse;
 import com.finalproject.StayFinderApi.service.IImageService;
@@ -39,11 +38,7 @@ public class FileController {
     @PostMapping("/Hostel/uploadFile")
     public ImageResponse uploadFile(@RequestParam("file") MultipartFile file, @RequestParam("hostelId") long hostelId) {
     	String fileName = fileStorageService.storeFile(file);
-        String imgUrl = ServletUriComponentsBuilder.fromCurrentContextPath()
-        		.path("api")
-                .path("/downloadFile/")
-                .path(fileName)
-                .toUriString();
+    	String imgUrl = imageService.createImgUrl(file);
         return imageService.addImage(imgUrl, fileName, hostelId);
     }
     
