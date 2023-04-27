@@ -63,7 +63,7 @@ public class AccountServiceImpl implements IAccountService{
 				account.setName(newAccount.getName());
 			if(newAccount.getPhonenumber()!= null)
 				account.setPhonenumber(newAccount.getPhonenumber());
-			if(newAccount.isGender())
+			if(newAccount.isGender() != account.isGender())
 				account.setGender(newAccount.isGender());
 			if(newAccount.getAvatarUrl()!= null)
 				account.setAvatarUrl(newAccount.getAvatarUrl());

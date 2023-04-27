@@ -80,7 +80,7 @@ public class HostelServiceImpl implements IHostelService {
 		}
 		post.setAccount(accountRepo.findById(hostelReq.getPost().getAccountId()).get());
 		post.setContent(hostelReq.getPost().getContent());
-		post.setStatus(PostStatusEnum.NOT_APPROVED.getValue());
+		post.setStatus(PostStatusEnum.NOT_YET_APPROVED.getValue());
 		post.setTitle(hostelReq.getPost().getTitle());
 		post.setHostel(hostelRepo.findById(hostel.getId()).get());
 		post.setNumberOfFavourites(0);
