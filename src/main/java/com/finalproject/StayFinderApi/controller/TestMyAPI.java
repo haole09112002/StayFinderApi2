@@ -58,8 +58,8 @@ public class TestMyAPI {
 	@GetMapping("test/create-sample-data")
 	public boolean getAll(){
 		List<RoomType> roomTypes = new ArrayList<RoomType>();
-		roomTypes.add(new RoomType(1, "Chung cu", null));
-		roomTypes.add(new RoomType(2, "Tro", null));
+		roomTypes.add(new RoomType(1, "Chung cư", null));
+		roomTypes.add(new RoomType(2, "Trọ", null));
 		roomTypes.add(new RoomType(3, "KTX", null));
 		roomTypeRepository.saveAll(roomTypes);
 		
