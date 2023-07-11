@@ -50,4 +50,13 @@ public class RestControllerExceptionHandler {
 	
 		return new ErrorResponse(false,messages, HttpStatus.NOT_FOUND.getReasonPhrase(),HttpStatus.NOT_FOUND);
 	}
+	@ExceptionHandler(StayFinderApiException.class)
+	public ErrorResponse resolveException(StayFinderApiException ex)
+	{		
+//		String message = "Please provide Request Body in valid JSON format";
+		List<String> messages = new ArrayList<>(1);
+		messages.add(ex.getMessage());
+	
+		return new ErrorResponse(false,messages,ex.getStatus().getReasonPhrase(),ex.getStatus());
+	}
 }

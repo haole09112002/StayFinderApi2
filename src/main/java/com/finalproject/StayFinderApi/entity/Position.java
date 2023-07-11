@@ -4,10 +4,9 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.hibernate.annotations.ManyToAny;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -15,6 +14,7 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
@@ -42,10 +42,10 @@ public class Position implements Serializable {
 	@Enumerated(EnumType.STRING)
 	private PositionNameEnum positionName;
 	
+
+	@ManyToMany(mappedBy="positions")
 	@JsonIgnore
-	@OneToMany(mappedBy="position", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<Account> accounts;
-	
 	
 	public List<Account> getAccounts(){
 		return this.accounts == null ? null : new ArrayList<Account>(this.accounts);

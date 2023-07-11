@@ -3,6 +3,7 @@ package com.finalproject.StayFinderApi.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -21,6 +22,7 @@ public class PostController {
 	private IPostService postService;
 	
 	@GetMapping
+	@PreAuthorize("hasRole('ADMIN')")
 	public List<PostResponse> getAll(){
 		return postService.getAll();
 	}
@@ -40,11 +42,13 @@ public class PostController {
 	}
 	
 	@GetMapping("/status/{status}")
+	@PreAuthorize("hasRole('ADMIN')")
 	public List<PostResponse> getByStatus(@PathVariable  int status) {
 		return postService.findByStatus(status);
 	}
 	
 	@PutMapping("/{id}/status/{status}")
+	@PreAuthorize("hasRole('ADMIN')")
 	public boolean changePostStatus(@PathVariable long id,@PathVariable  int status) {
 		return postService.changeStatus(id,status);
 	}

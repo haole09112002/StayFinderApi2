@@ -4,15 +4,16 @@ package com.finalproject.StayFinderApi.service;
 import com.finalproject.StayFinderApi.dto.HostelRequest;
 import com.finalproject.StayFinderApi.dto.HostelResp;
 import com.finalproject.StayFinderApi.dto.PagedResponse;
+import com.finalproject.StayFinderApi.security.UserPrincipal;
 
 
 public interface IHostelService {
 	
-	HostelResp saveHostel(HostelRequest hostel);
+	HostelResp saveHostel(HostelRequest hostel, UserPrincipal userPrincipal);
 	
-	HostelResp updateHostel(HostelRequest hostel);
+	HostelResp updateHostel(HostelRequest hostel, Long id, UserPrincipal userPrincipal);
 	
-	void deleteHostel(Long id);
+	void deleteHostel(Long id, UserPrincipal userPrincipal);
 	
 	PagedResponse<HostelResp> getAllHostel(int page, int size);
 	
@@ -23,7 +24,7 @@ public interface IHostelService {
 	
 	HostelResp getHostelByPostId(long id);
 	
-	HostelResp updateStatusHostel(long id, int status);
+	HostelResp updateStatusHostel(long id, int status, UserPrincipal userPrincipal);
 	
 	PagedResponse<HostelResp> getHostelByStatus(int page, int size, int status);
 	

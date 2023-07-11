@@ -4,7 +4,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
@@ -12,13 +11,13 @@ import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
@@ -43,11 +42,11 @@ public class Account implements Serializable {
 	@Column(columnDefinition = "text")
 	private String name;
 	
-	@Column(nullable = false,columnDefinition = "varchar(50)")
+	@Column(nullable = false,columnDefinition = "varchar(50)", unique = true)
 	private String username;
 	
 	@JsonIgnore
-	@Column(nullable = false,columnDefinition = "varchar(50)")
+	@Column(nullable = false,columnDefinition = "TEXT")
 	private String password;
 	
 	@Column
@@ -62,9 +61,11 @@ public class Account implements Serializable {
 	@Column(columnDefinition = "char(10)")
 	private String phonenumber;
 	
-	@ManyToOne
-    @JoinColumn(name="PositionId", nullable=false)
-	private Position position;
+
+	
+	@ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	@JoinTable(name = "account_position", joinColumns = @JoinColumn(name = "account_id"), inverseJoinColumns = @JoinColumn(name = "position_id"))
+	private List<Position> positions;
 	
 	@JsonIgnore
 	@OneToMany(mappedBy="account", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -82,10 +83,8 @@ public class Account implements Serializable {
 	  inverseJoinColumns = @JoinColumn(name = "PostId"))
 	List<Post> listFavouritePosts;
 
-//	@JsonIgnore
-	public Position getPosition() {
-		return this.position;
-	}
+
+
 	
 	public List<Post> getPosts(){
 		return this.posts == null ? null : new ArrayList<Post>(this.posts);

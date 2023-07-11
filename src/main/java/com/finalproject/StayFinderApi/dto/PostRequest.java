@@ -9,7 +9,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class PostRequest {
 	 
-	private	long accountId; 
 	
 	private String title;
 	

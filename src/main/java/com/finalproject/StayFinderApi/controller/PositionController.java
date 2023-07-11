@@ -23,10 +23,6 @@ public class PositionController {
 		return positionService.getAllPosition();
 	}
 	
-//	@PostMapping
-//	Position add(@RequestBody String positionName){
-//		return positionService.savePosition(new Position(0, positio, null));
-//	}
 	@GetMapping("/{id}")
 	public Position getOneById(@PathVariable long id){
 		return positionService.getOnePosition(id);

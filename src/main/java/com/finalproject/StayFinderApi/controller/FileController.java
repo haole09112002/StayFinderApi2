@@ -9,10 +9,13 @@ import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.finalproject.StayFinderApi.dto.ImageResponse;
+import com.finalproject.StayFinderApi.security.UserPrincipal;
 import com.finalproject.StayFinderApi.service.IImageService;
 import com.finalproject.StayFinderApi.service.impl.FileStorageService;
 
@@ -36,18 +39,21 @@ public class FileController {
     
 
     @PostMapping("/Hostel/uploadFile")
-    public ImageResponse uploadFile(@RequestParam("file") MultipartFile file, @RequestParam("hostelId") long hostelId) {
+	@PreAuthorize("hasRole('USER')")
+    public ImageResponse uploadFile(@RequestParam("file") MultipartFile file, @RequestParam("hostelId") long hostelId, Authentication authentication) {
     	String fileName = fileStorageService.storeFile(file);
     	String imgUrl = imageService.createImgUrl(file);
-        return imageService.addImage(imgUrl, fileName, hostelId);
+    	UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
+        return imageService.addImage(imgUrl, fileName, hostelId, userPrincipal);
     }
     
 
     @PostMapping("/Hostel/uploadMultipleFiles")
-    public List<ImageResponse> uploadMultipleFiles(@RequestParam("files") MultipartFile[] files, @RequestParam("hostelId") long hostelId) {
+	@PreAuthorize("hasRole('USER')")
+    public List<ImageResponse> uploadMultipleFiles(@RequestParam("files") MultipartFile[] files, @RequestParam("hostelId") long hostelId, Authentication authentication) {
         return Arrays.asList(files)
                 .stream()
-                .map(file -> uploadFile(file, hostelId))
+                .map(file -> uploadFile(file, hostelId, authentication))
                 .collect(Collectors.toList());
     }
 

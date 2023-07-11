@@ -6,6 +6,7 @@ import com.finalproject.StayFinderApi.dto.AccountLogin;
 import com.finalproject.StayFinderApi.dto.AccountProfile;
 import com.finalproject.StayFinderApi.dto.AccountReq;
 import com.finalproject.StayFinderApi.entity.Account;
+import com.finalproject.StayFinderApi.security.UserPrincipal;
 
 
 
@@ -39,6 +40,8 @@ public interface IAccountService {
 	
 	public Account removeAdmin(String username);
 	
-	public Account addAvatar(String username, String avatarUrl);
+	public Account addAvatar(UserPrincipal userPrincipal, String avatarUrl);
+
+	Boolean changePassword(UserPrincipal userPrincipal, String password);
 	
 }

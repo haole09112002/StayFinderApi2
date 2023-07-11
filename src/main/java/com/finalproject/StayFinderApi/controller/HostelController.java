@@ -2,6 +2,8 @@ package com.finalproject.StayFinderApi.controller;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -15,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.finalproject.StayFinderApi.dto.HostelRequest;
 import com.finalproject.StayFinderApi.dto.HostelResp;
 import com.finalproject.StayFinderApi.dto.PagedResponse;
+import com.finalproject.StayFinderApi.security.UserPrincipal;
 import com.finalproject.StayFinderApi.service.IHostelService;
 import com.finalproject.StayFinderApi.utils.AppConstants;
 
@@ -39,18 +42,25 @@ public class HostelController {
 	}
 
 	@DeleteMapping("/{id}")
-	public void delete(@PathVariable Long id) {
-		hostelService.deleteHostel(id);
+	@PreAuthorize("hasRole('ADMIN') or hasRole('USER') ")
+	public void delete(@PathVariable Long id, Authentication authentication) {
+		UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
+		hostelService.deleteHostel(id, userPrincipal);
 	}
 
 	@PutMapping
-	public HostelResp update(@RequestBody HostelRequest hostel) {
-		return hostelService.updateHostel(hostel);
+	@PreAuthorize("hasRole('USER')")
+	public HostelResp update(@RequestBody HostelRequest hostel, @RequestParam Long hostelId, Authentication authentication) {
+		UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
+		return hostelService.updateHostel(hostel, hostelId, userPrincipal);
 	}
 
 	@PostMapping
-	public HostelResp save(@RequestBody HostelRequest hostelReq) {
-		return hostelService.saveHostel(hostelReq);
+	@PreAuthorize("hasRole('USER')")
+	public HostelResp save(@RequestBody HostelRequest hostelReq, Authentication authentication) {
+		UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
+		
+		return hostelService.saveHostel(hostelReq, userPrincipal);
 	}
 
 
@@ -68,6 +78,7 @@ public class HostelController {
 	}
 	
 	@GetMapping("/search-admin")
+	@PreAuthorize("hasRole('ADMIN')")
 	public PagedResponse<HostelResp> findByManyOptionAdmin(@RequestParam(name = "page", required = false, defaultValue = AppConstants.DEFAULT_PAGE_NUMBER) Integer page,
 			@RequestParam(name = "size", required = false, defaultValue = AppConstants.DEFAULT_PAGE_SIZE) Integer size,@RequestParam(required = false, defaultValue = "") String address,
 			@RequestParam(required = false, defaultValue = "0.0") double areaMin,
@@ -81,8 +92,10 @@ public class HostelController {
 	}
 	
 	@PutMapping("status/{id}")
-	public HostelResp updateStatusHostel(@PathVariable long id, @RequestParam(required = false, defaultValue = "0") int status) {
-		return hostelService.updateStatusHostel(id, status);
+	@PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
+	public HostelResp updateStatusHostel(@PathVariable long id, @RequestParam(required = false, defaultValue = "0") int status, Authentication authentication) {
+		UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
+		return hostelService.updateStatusHostel(id, status, userPrincipal);
 	}
 	@GetMapping("available")
 	public PagedResponse<HostelResp> findHostelByStatusAndPostStatus(@RequestParam(name = "page", required = false, defaultValue = AppConstants.DEFAULT_PAGE_NUMBER) Integer page,

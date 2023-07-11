@@ -10,6 +10,8 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Service;
 
 import com.finalproject.StayFinderApi.dto.AccountRespone;
@@ -20,19 +22,24 @@ import com.finalproject.StayFinderApi.dto.PostResp;
 import com.finalproject.StayFinderApi.dto.RoomtypeResponse;
 import com.finalproject.StayFinderApi.entity.Account;
 import com.finalproject.StayFinderApi.entity.Hostel;
+import com.finalproject.StayFinderApi.entity.PositionNameEnum;
 import com.finalproject.StayFinderApi.entity.Post;
 import com.finalproject.StayFinderApi.entity.PostStatusEnum;
 import com.finalproject.StayFinderApi.entity.RoomType;
 import com.finalproject.StayFinderApi.exception.AppException;
 import com.finalproject.StayFinderApi.exception.BadRequestException;
 import com.finalproject.StayFinderApi.exception.NotFoundException;
+import com.finalproject.StayFinderApi.exception.StayFinderApiException;
 import com.finalproject.StayFinderApi.repository.AccountRepository;
 import com.finalproject.StayFinderApi.repository.HostelRepository;
 import com.finalproject.StayFinderApi.repository.ImageRepository;
 import com.finalproject.StayFinderApi.repository.PostRepository;
 import com.finalproject.StayFinderApi.repository.RoomTypeRepository;
+import com.finalproject.StayFinderApi.security.UserPrincipal;
 import com.finalproject.StayFinderApi.service.IHostelService;
 import com.finalproject.StayFinderApi.utils.AppUtils;
+
+import jakarta.transaction.Transactional;
 
 @Service
 public class HostelServiceImpl implements IHostelService {
@@ -53,7 +60,8 @@ public class HostelServiceImpl implements IHostelService {
 	private PostRepository postRepo;
 
 	@Override
-	public HostelResp saveHostel(HostelRequest hostelReq) {
+	@Transactional
+	public HostelResp saveHostel(HostelRequest hostelReq, UserPrincipal userPrincipal) {
 		Hostel newHostel = new Hostel(hostelReq.getName(), hostelReq.getCapacity(), hostelReq.getArea(),
 				hostelReq.getAddress(), hostelReq.getRentPrice(), hostelReq.getDepositPrice(), hostelReq.getStatus(),
 				hostelReq.getDescription(), hostelReq.getElectricPrice(), hostelReq.getWaterPrice());
@@ -62,31 +70,25 @@ public class HostelServiceImpl implements IHostelService {
 				.orElseThrow(() -> new NotFoundException("Không tồn tại roomtypeId"));
 		newHostel.setRoomtype(roomType);
 
-		Hostel hostel = hostelRepo.save(newHostel);
-
-//		if (!hostelReq.getImages().isEmpty()) {
-//			hostelReq.getImages().forEach(img -> {
-//				img.setHostel(hostel);
-//				imageRepo.save(img);
-//			});
-//		}
+//		Hostel hostel = hostelRepo.save(newHostel);
 
 		Post post = new Post();
-		Optional<Account> accountOptional = accountRepo.findById(hostelReq.getPost().getAccountId());
+		Optional<Account> accountOptional = accountRepo.findById(userPrincipal.getId());
 		if (accountOptional.isPresent())
 			post.setAccount(accountOptional.get());
 		else {
-			throw new RuntimeException("Can't find account by id: " + hostelReq.getPost().getAccountId());
+			throw new NotFoundException("Can't find account by id: " + userPrincipal.getId());
 		}
-		post.setAccount(accountRepo.findById(hostelReq.getPost().getAccountId()).get());
+		post.setAccount(accountOptional.get());
 		post.setContent(hostelReq.getPost().getContent());
 		post.setStatus(PostStatusEnum.NOT_YET_APPROVED.getValue());
 		post.setTitle(hostelReq.getPost().getTitle());
-		post.setHostel(hostelRepo.findById(hostel.getId()).get());
+		post.setHostel(newHostel);
 		post.setNumberOfFavourites(0);
 		post.setPostTime(new Date());
-		postRepo.save(post);
-		Hostel h = hostelRepo.findById(hostel.getId()).get();
+//		postRepo.save(post);
+		Hostel h = hostelRepo.save(newHostel);
+		h.setPost(post);
 		PostResp postResp = new PostResp(post.getId(),
 				new AccountRespone(post.getAccount().getUsername(), post.getAccount().getName(),
 						post.getAccount().getAvatarUrl()),
@@ -99,10 +101,12 @@ public class HostelServiceImpl implements IHostelService {
 	}
 
 	@Override
-	public HostelResp updateHostel(HostelRequest hostel) {
-		Optional<Hostel> optional = hostelRepo.findById(hostel.getId());
-		if (optional.isPresent()) {
-			Hostel newHostel = optional.get();
+	@Transactional
+	public HostelResp updateHostel(HostelRequest hostel, Long id, UserPrincipal userPrincipal) {
+		Hostel newHostel = hostelRepo.findById(id)
+				.orElseThrow(() -> new AppException("Can't update Hostel, can't find hostel by id: " + id));
+		Post post = postRepo.findById(id).orElseThrow(() -> new NotFoundException("Không tìm thấy post id tương ứng"));
+		if (post.getAccount().getId() == userPrincipal.getId()) {
 			newHostel.setAddress(hostel.getAddress());
 			newHostel.setArea(hostel.getArea());
 			newHostel.setCapacity(hostel.getCapacity());
@@ -112,38 +116,40 @@ public class HostelServiceImpl implements IHostelService {
 			newHostel.setRentPrice(hostel.getRentPrice());
 			newHostel.setWaterPrice(hostel.getWaterPrice());
 			newHostel.setRoomtype(roomTypeRepo.findById(hostel.getRoomTypeId()).get());
-
-//			if (!hostel.getImages().isEmpty()) {
-//				hostel.getImages().forEach(img -> {
-//					img.setHostel(newHostel);
-//					imageRepo.save(img);
-//				});
-//			}
 			Hostel h = hostelRepo.save(newHostel);
 
-			Post post = postRepo.findById(hostel.getId()).get();
 			post.setContent(hostel.getPost().getContent());
 			post.setTitle(hostel.getPost().getTitle());
 			postRepo.save(post);
 			PostResp postResp = new PostResp(post.getId(),
 					new AccountRespone(post.getAccount().getUsername(), post.getAccount().getName(),
 							post.getAccount().getAvatarUrl()),
-					post.getTitle(), post.getContent(), post.getNumberOfFavourites(), post.getStatus(),
-					post.getPostTime(), post.getHostel().getId());
-			return new HostelResp(h.getId(), h.getName(), h.getCapacity(), h.getArea(), h.getAddress(),
-					h.getRentPrice(), h.getDepositPrice(), h.getStatus(), h.getDescription(),
-					new RoomtypeResponse(h.getRoomtype().getId(), h.getRoomtype().getRoomTypeName()),
-					h.getElectricPrice(), h.getWaterPrice(), postResp, imageRepo.findByHostelId(h.getId()));
-		} else {
-			throw new RuntimeException("Can't update Hostel, can't find hostel by id: " + hostel.getId());
+					post.getTitle(), post.getContent(), post.getNumberOfFavourites(), post.getStatus(), post.getPostTime(),
+					post.getHostel().getId());
+			return new HostelResp(h.getId(), h.getName(), h.getCapacity(), h.getArea(), h.getAddress(), h.getRentPrice(),
+					h.getDepositPrice(), h.getStatus(), h.getDescription(),
+					new RoomtypeResponse(h.getRoomtype().getId(), h.getRoomtype().getRoomTypeName()), h.getElectricPrice(),
+					h.getWaterPrice(), postResp, imageRepo.findByHostelId(h.getId()));
 		}
+		else
+			throw new StayFinderApiException(HttpStatus.UNAUTHORIZED, "You don't have permission to update this hostel");
+
 	}
 
 	@Override
-	public void deleteHostel(Long id) {
-		imageRepo.findByHostelId(id).forEach(item -> imageRepo.deleteById(item.getId()));
-		postRepo.deleteById(id);
-		hostelRepo.deleteById(id);
+	public void deleteHostel(Long id, UserPrincipal userPrincipal) {
+		Hostel hostel = hostelRepo.findById(id)
+				.orElseThrow(() -> new AppException("Can't update Hostel, can't find hostel by id: " + id));
+		Post post = postRepo.findById(id).orElseThrow(() -> new NotFoundException("Không tìm thấy post id tương ứng"));
+		if (post.getAccount().getId() == userPrincipal.getId() || userPrincipal.getAuthorities()
+				.contains(new SimpleGrantedAuthority(PositionNameEnum.ROLE_ADMIN.toString()))) {
+			imageRepo.findByHostelId(id).forEach(item -> imageRepo.deleteById(item.getId()));
+			postRepo.deleteById(id);
+			hostelRepo.deleteById(id);
+		}
+		else 
+			throw new StayFinderApiException(HttpStatus.UNAUTHORIZED, "You don't have permission to delete this hostel");
+		
 	}
 
 	@Override
@@ -185,7 +191,7 @@ public class HostelServiceImpl implements IHostelService {
 					new RoomtypeResponse(h.getRoomtype().getId(), h.getRoomtype().getRoomTypeName()),
 					h.getElectricPrice(), h.getWaterPrice(), postResp, h.getImages());
 		} else
-		throw new BadRequestException("Hostel id: " + id + " khong ton tai trong he thong");
+			throw new BadRequestException("Hostel id: " + id + " khong ton tai trong he thong");
 	}
 
 	@Override
@@ -211,12 +217,12 @@ public class HostelServiceImpl implements IHostelService {
 		AppUtils.validatePageNumberAndSize(page, size);
 		PageRequest pageable = PageRequest.of(page, size);
 		Page<Hostel> hostelsPage;
-		if(idRoomType == (long) 0)
+		if (idRoomType == (long) 0)
 			hostelsPage = hostelRepo.findByManyOption2(address, areaMin, areMax, minRent, maxRent, capacity, pageable);
-		
+
 		else {
-			hostelsPage = hostelRepo.findByManyOptionWithRoomTypeId(address, areaMin, areMax, minRent, maxRent, capacity,
-					idRoomType, pageable);
+			hostelsPage = hostelRepo.findByManyOptionWithRoomTypeId(address, areaMin, areMax, minRent, maxRent,
+					capacity, idRoomType, pageable);
 		}
 		List<HostelResp> hostelResponse = new ArrayList<>(hostelsPage.getContent().size());
 
@@ -235,16 +241,15 @@ public class HostelServiceImpl implements IHostelService {
 				hostelsPage.getTotalElements(), hostelsPage.getTotalPages(), hostelsPage.isLast());
 	}
 
-	
-
 	@Override
-	public HostelResp updateStatusHostel(long id, int status) {
-		Optional<Hostel> hostel = hostelRepo.findById(id);
-		if (hostel.isPresent()) {
-			Hostel h = hostel.get();
+	public HostelResp updateStatusHostel(long id, int status, UserPrincipal userPrincipal) {
+		Hostel h = hostelRepo.findById(id)
+				.orElseThrow(() -> new AppException("Can't update status Hostel, can't find hostel by id: " + id));
+		Post post = postRepo.findById(id).orElseThrow(() -> new NotFoundException("Không tìm thấy post id tương ứng"));
+		if (post.getAccount().getId() == userPrincipal.getId() || userPrincipal.getAuthorities()
+				.contains(new SimpleGrantedAuthority(PositionNameEnum.ROLE_ADMIN.toString()))) {
 			h.setStatus(status);
 			h = hostelRepo.save(h);
-			Post post = postRepo.findById(h.getId()).get();
 			PostResp postResp = new PostResp(post.getId(),
 					new AccountRespone(post.getAccount().getUsername(), post.getAccount().getName(),
 							post.getAccount().getAvatarUrl()),
@@ -255,7 +260,8 @@ public class HostelServiceImpl implements IHostelService {
 					new RoomtypeResponse(h.getRoomtype().getId(), h.getRoomtype().getRoomTypeName()),
 					h.getElectricPrice(), h.getWaterPrice(), postResp, h.getImages());
 		}
-		throw new AppException("Không thể cập nhật, id không tồn tại");
+		else
+			throw new StayFinderApiException(HttpStatus.UNAUTHORIZED, "You don't have permission to update this hostel");
 	}
 
 	@Override
@@ -305,12 +311,13 @@ public class HostelServiceImpl implements IHostelService {
 		AppUtils.validatePageNumberAndSize(page, size);
 		PageRequest pageable = PageRequest.of(page, size);
 		Page<Hostel> hostelsPage;
-		if(idRoomType == (long) 0)
-			hostelsPage = hostelRepo.findByManyOptionAdmin2(address, areaMin, areMax, minRent, maxRent, capacity, pageable);
-		
+		if (idRoomType == (long) 0)
+			hostelsPage = hostelRepo.findByManyOptionAdmin2(address, areaMin, areMax, minRent, maxRent, capacity,
+					pageable);
+
 		else {
-			hostelsPage = hostelRepo.findByManyOptionWithRoomTypeIdAdmin(address, areaMin, areMax, minRent, maxRent, capacity,
-					idRoomType, pageable);
+			hostelsPage = hostelRepo.findByManyOptionWithRoomTypeIdAdmin(address, areaMin, areMax, minRent, maxRent,
+					capacity, idRoomType, pageable);
 		}
 		List<HostelResp> hostelResponse = new ArrayList<>(hostelsPage.getContent().size());
 

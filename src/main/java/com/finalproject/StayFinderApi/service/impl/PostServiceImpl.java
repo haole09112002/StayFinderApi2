@@ -51,17 +51,6 @@ public class PostServiceImpl implements IPostService {
 		}
 	}
 
-	@Override
-	public boolean deletePost(long id) {
-		postRepo.deleteById(id);
-		return true;
-	}
-
-	@Override
-	public PostResponse addPost(Post post) {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
 	@Override
 	public List<PostResponse> findByAccountUsernameAndStatus(String username, int status) {
@@ -86,7 +75,8 @@ public class PostServiceImpl implements IPostService {
 				return convertToPostResp(p);
 			}).collect(Collectors.toList());
 		}
-		throw new BadRequestException("Status id: " + status + " khong ton tai");
+		else 
+			throw new BadRequestException("Status id: " + status + " khong ton tai");
 	}
 
 	@Override
@@ -102,7 +92,8 @@ public class PostServiceImpl implements IPostService {
 			}
 			throw new BadRequestException("Status id: " + status + " khong ton tai");
 		}
-		throw new AppException("That bai, id: " + id + " khong ton tai");
+		else 
+			throw new AppException("That bai, id: " + id + " khong ton tai");
 	}
 
 	public PostResponse convertToPostResp(Post p) {

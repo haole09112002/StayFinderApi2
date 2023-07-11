@@ -63,7 +63,7 @@ public class ScheduleServiceImpl implements IScheduleService {
 						s.getRenterPhoneNumber(), s.getContent(), s.getMeetingTime(), convertToPostResp(s.getPost()));
 			}).collect(Collectors.toList());
 		}
-		throw new NotFoundException("username: " + username + " khong ton tai");
+		else throw new NotFoundException("username: " + username + " khong ton tai");
 	}
 
 	@Override
@@ -78,7 +78,7 @@ public class ScheduleServiceImpl implements IScheduleService {
 			return new ScheduleResponse(s.getId(), s.getRenterUsername(), s.getRenterName(),
 						s.getRenterPhoneNumber(), s.getContent(), s.getMeetingTime(), convertToPostResp(s.getPost()));
 		}
-		throw new AppException("Can't add Schedule, can't find Post by post id: " + scheduleRequest.getPostId());
+		else throw new AppException("Can't add Schedule, can't find Post by post id: " + scheduleRequest.getPostId());
 	}
 	@Override
 	public List<ScheduleResponse> getByPostAccountUsername(String username){
@@ -95,7 +95,7 @@ public class ScheduleServiceImpl implements IScheduleService {
 						s.getRenterPhoneNumber(), s.getContent(), s.getMeetingTime(),convertToPostResp(s.getPost()));
 			}).collect(Collectors.toList());
 		}
-		throw new NotFoundException("username: " + username + " khong ton tai");
+		else throw new NotFoundException("username: " + username + " khong ton tai");
 	}
 
 	public PostResponse convertToPostResp(Post p) {

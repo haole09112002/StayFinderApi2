@@ -68,9 +68,11 @@ public class FavouritesAccountPostImpl implements IFavouritesAccountPostService{
 				
 				return true;
 			}
-			throw new BadRequestException("username: " + username +" already favourites Post id: " + postId);
+			else 
+				throw new BadRequestException("username: " + username +" already favourites Post id: " + postId);
 		}
-		throw new AppException("username: " + username +" can't favourites Post id: " + postId);
+		else
+			throw new AppException("username: " + username +" can't favourites Post id: " + postId);
 	}
 
 	@Override
@@ -87,7 +89,7 @@ public class FavouritesAccountPostImpl implements IFavouritesAccountPostService{
 			}
 			return false;
 		}
-		throw new NotFoundException(" can't find Post by Post id: " + postId);
+		else throw new NotFoundException(" can't find Post by Post id: " + postId);
 	}
 	
 
@@ -117,9 +119,10 @@ public class FavouritesAccountPostImpl implements IFavouritesAccountPostService{
 				postRepo.save(post);
 				return true;
 			}
+			else return false;
 		}
-	
-		throw new NotFoundException("username: " + username +" can't Unfavourites Post id: " + postId);
+		else 
+			throw new NotFoundException("username: " + username +" can't Unfavourites Post id: " + postId);
 	}
 
 	@Override
@@ -134,7 +137,8 @@ public class FavouritesAccountPostImpl implements IFavouritesAccountPostService{
 				
 			}).collect(Collectors.toList());
 		}
-		throw new NotFoundException(" can't find Account favourites by Post id: " + postId);
+		else 
+			throw new NotFoundException(" can't find Account favourites by Post id: " + postId);
 	}
 
 	@Override

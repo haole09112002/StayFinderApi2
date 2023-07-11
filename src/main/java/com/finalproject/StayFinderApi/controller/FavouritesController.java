@@ -2,6 +2,7 @@ package com.finalproject.StayFinderApi.controller;
 
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -26,17 +27,20 @@ public class FavouritesController {
 	private IFavouritesAccountPostService favouritesAccountPostService;
 	
 	@PostMapping
+	@PreAuthorize("hasRole('USER')")
 	public boolean addFavourites(@RequestBody FavouritesRequest favouritesRequest) {
 		return favouritesService.addFavourites(favouritesRequest.getUsername(), favouritesRequest.getPostId());
 	}
 
 	@GetMapping("/check")
+	@PreAuthorize("hasRole('USER')")
 	public boolean checkAccountFavouriedPost(@RequestParam String username, @RequestParam long postId) {
 		return favouritesService.checkAccountFavouriedPost(username, postId);
 	}
 	
 
 	@PostMapping("/unfavourites")
+	@PreAuthorize("hasRole('USER')")
 	public boolean unFavourites(@RequestBody FavouritesRequest favouritesRequest) {
 		
 		return favouritesService.unFavourites(favouritesRequest.getUsername(), favouritesRequest.getPostId());
